@@ -1,0 +1,587 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="-1928" y="-8" w="1936" h="1216" maximized="1" screen="1">
+        <splitter orientation="1">
+            <split size="1167"/>
+            <splitter orientation="1">
+                <split size="582"/>
+                <dock id="" activePageId="uk.co.thefoundry.scripteditor.2">
+                    <page id="uk.co.thefoundry.scripteditor.2"/>
+                </dock>
+                <split size="581"/>
+                <dock id="" activePageId="uk.co.thefoundry.scripteditor.1">
+                    <page id="uk.co.thefoundry.scripteditor.1"/>
+                </dock>
+            </splitter>
+            <split size="749"/>
+            <splitter orientation="2">
+                <split size="603"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="64"/>
+                <dock id="" activePageId="Toolbar.1">
+                    <page id="Toolbar.1"/>
+                </dock>
+                <split size="480"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="DAG.2"/>
+                </dock>
+            </splitter>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name W:/Manuel_Perez/gizmos/projectionSlicer/projectionSlicer.nk
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+}
+Dot {
+ inputs 0
+ name background
+ xpos -743
+ ypos -185
+}
+Card2 {
+ inputs 0
+ control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+ name Card1
+ xpos -668
+ ypos -252
+}
+Dot {
+ name geo
+ xpos -634
+ ypos -189
+}
+Dot {
+ inputs 0
+ name input
+ xpos -323
+ ypos -187
+}
+Dot {
+ inputs 0
+ name camera
+ xpos -482
+ ypos -186
+}
+Viewer {
+ inputs 0
+ frame_range 1-100
+ name Viewer1
+ xpos 14
+ ypos 443
+}
+FrameHold {
+ inputs 0
+ first_frame 10
+ name FrameHold1
+ xpos -260
+ ypos 8
+}
+Dot {
+ inputs 0
+ name Dot1
+ xpos -1117
+ ypos -96
+}
+Dot {
+ inputs 0
+ name Dot2
+ xpos -1025
+ ypos -110
+}
+MergeMat {
+ inputs 2
+ name MergeMat1
+ xpos -1059
+ ypos -92
+}
+Group {
+ inputs 0
+ name projectionSlicer
+ tile_color 0xff0000ff
+ selected true
+ xpos -649
+ ypos 39
+ addUserKnob {20 User l "Slicer controls"}
+ addUserKnob {26 sliceCount l "slice count"}
+ addUserKnob {3 firstFrame l "first frame"}
+ firstFrame 125
+ addUserKnob {3 lastFrame l "last frame" -STARTLINE}
+ lastFrame 200
+ addUserKnob {3 frequency l slices -STARTLINE}
+ frequency 5
+ addUserKnob {22 run -STARTLINE T "#Variables\nfirstFrame = int(nuke.thisGroup()\['firstFrame'].value())\nlastFrame = int(nuke.thisGroup()\['lastFrame'].value())\nfrequency = int(nuke.thisGroup()\['frequency'].value())\nframeRange = lastFrame - firstFrame\nslices = int(frameRange / frequency)\nmerge = nuke.thisGroup()\['mergeType'].value()\n\n#Inputs\ninput = nuke.toNode('input')\ncam = nuke.toNode('camera')\ngeo = nuke.toNode('geo')\nback = nuke.toNode('background')\noutput = nuke.toNode('Output1')\nmergeMat = None\n\nfor node in nuke.allNodes():\n\n    if node.Class() in ('Input','Output'):  \n        pass\n    else:\n        nuke.delete(node) \n      \ndef projRecursion(input,cam,geo,back,mergeMat,slices):\n\n    for f in range(slices):\n\n        fHoldRGBA = nuke.nodes.FrameHold(inputs = \[input], \n        first_frame = firstFrame + range(slices).index(f))\n        fHoldCam = nuke.nodes.FrameHold(inputs = \[cam], \n        first_frame = firstFrame + range(slices).index(f))    \n        proj = nuke.nodes.Project3D(inputs = \[fHoldRGBA ,fHoldCam], crop = False)\n\n        if merge == 'MergeMat':\n            mergeMat = nuke.nodes.MergeMat(inputs = \[mergeMat, proj])\n\n        elif merge == 'ScanlineRender':\n            applyMat = nuke.nodes.ApplyMaterial(inputs = \[geo, proj])\n            scan = nuke.nodes.ScanlineRender(inputs = \[back,applyMat,cam])\n          \n        else:\n            pass\n    \n    if merge == 'MergeMat':\n        applyMat = nuke.nodes.ApplyMaterial(inputs = \[geo, mergeMat])\n        scan = nuke.nodes.ScanlineRender(inputs = \[back,applyMat,cam])\n        output.setInput(0,scan)\n    else:\n        pass\n\nprojRecursion(input,cam,geo,back,mergeMat, slices)"}
+ addUserKnob {26 type}
+ addUserKnob {4 mergeType l "merge type" M {MergeMat ScanlineRender}}
+}
+ Input {
+  inputs 0
+  name camera
+  xpos -273
+  ypos 7
+  number 1
+ }
+set N3cdd800 [stack 0]
+push $N3cdd800
+ FrameHold {
+  first_frame 139
+  name FrameHold30
+  xpos 2147
+  ypos 33
+ }
+ Input {
+  inputs 0
+  name input
+  xpos -75
+ }
+set N3cdd400 [stack 0]
+ FrameHold {
+  first_frame 139
+  name FrameHold29
+  xpos 1905
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D15
+  xpos 2147
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 138
+  name FrameHold28
+  xpos 2037
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 138
+  name FrameHold27
+  xpos 1905
+  ypos 65
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D14
+  xpos 2037
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 137
+  name FrameHold26
+  xpos 1817
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 137
+  name FrameHold25
+  xpos 1575
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D13
+  xpos 1817
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 136
+  name FrameHold24
+  xpos 1707
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 136
+  name FrameHold23
+  xpos 1575
+  ypos 65
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D12
+  xpos 1707
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 135
+  name FrameHold22
+  xpos 1487
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 135
+  name FrameHold21
+  xpos 1245
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D11
+  xpos 1487
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 134
+  name FrameHold20
+  xpos 1377
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 134
+  name FrameHold19
+  xpos 1245
+  ypos 65
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D10
+  xpos 1377
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 133
+  name FrameHold18
+  xpos 1157
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 133
+  name FrameHold17
+  xpos 915
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D9
+  xpos 1157
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 132
+  name FrameHold16
+  xpos 1047
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 132
+  name FrameHold15
+  xpos 915
+  ypos 65
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D8
+  xpos 1047
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 131
+  name FrameHold14
+  xpos 827
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 131
+  name FrameHold13
+  xpos 585
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D7
+  xpos 827
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 130
+  name FrameHold12
+  xpos 717
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 130
+  name FrameHold11
+  xpos 585
+  ypos 65
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D6
+  xpos 717
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 129
+  name FrameHold10
+  xpos 497
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 129
+  name FrameHold9
+  xpos 365
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D5
+  xpos 497
+  ypos 71
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 128
+  name FrameHold8
+  xpos -163
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 128
+  name FrameHold7
+  xpos 255
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D4
+  xpos 365
+  ypos 64
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 127
+  name FrameHold6
+  xpos -163
+  ypos 58
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 127
+  name FrameHold5
+  xpos 145
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D3
+  xpos 255
+  ypos 64
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 126
+  name FrameHold4
+  xpos -273
+  ypos 33
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 126
+  name FrameHold3
+  xpos 35
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D2
+  xpos 145
+  ypos 64
+ }
+push $N3cdd800
+ FrameHold {
+  first_frame 125
+  name FrameHold2
+  xpos -273
+  ypos 58
+ }
+push $N3cdd400
+ FrameHold {
+  first_frame 125
+  name FrameHold1
+  xpos -75
+  ypos 26
+ }
+ Project3D {
+  inputs 2
+  crop false
+  name Project3D1
+  xpos -75
+  ypos 64
+ }
+push 0
+ MergeMat {
+  inputs 2
+  name MergeMat1
+  selected true
+  xpos 31
+  ypos 90
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat2
+  xpos 145
+  ypos 90
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat3
+  xpos 255
+  ypos 90
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat4
+  xpos 365
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat5
+  xpos 497
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat6
+  xpos 717
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat7
+  xpos 827
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat8
+  xpos 1047
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat9
+  xpos 1157
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat10
+  xpos 1377
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat11
+  xpos 1487
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat12
+  xpos 1707
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat13
+  xpos 1817
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat14
+  xpos 2037
+  ypos 97
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat15
+  xpos 2147
+  ypos 97
+ }
+ Input {
+  inputs 0
+  name geo
+  xpos -481
+  ypos 7
+  number 2
+ }
+ ApplyMaterial {
+  inputs 2
+  name ApplyMaterial1
+  xpos 2147
+  ypos 123
+ }
+ Input {
+  inputs 0
+  name background
+  xpos -658
+  ypos 9
+  number 3
+ }
+ ScanlineRender {
+  inputs 3
+  name ScanlineRender1
+  xpos 2147
+  ypos 149
+ }
+ Output {
+  name Output1
+  xpos -530
+  ypos 2810
+ }
+end_group
